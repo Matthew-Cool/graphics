@@ -24,7 +24,7 @@ int yangle = 0;
 int zangle = 0;
 
 // Surface coordinates
-const int SIZE = 64;
+const int SIZE = 128;
 float Px[SIZE + 1][SIZE + 1];
 float Py[SIZE + 1][SIZE + 1];
 float Pz[SIZE + 1][SIZE + 1];
@@ -252,28 +252,57 @@ void applyLighting(int i, int j, float &r, float &g, float &b)
 //---------------------------------------
 void init_surface()
 {
-   for (int i=0; i<=SIZE; i++){
-        for (int j=0; j<=SIZE; j++)
-        {
-            Px[i][j] = -0.8 + 1.6 * i / SIZE;
-            Py[i][j] = -0.8 + 1.6 * j / SIZE;
+   // reset x, y and z
+   for (int i = 0; i <= SIZE; i++)
+   {
+      for (int j = 0; j <= SIZE; j++)
+      {
+         Px[i][j] = -0.8 + 1.6 * i / SIZE;
+         Py[i][j] = -0.8 + 1.6 * j / SIZE;
+         Pz[i][j] = 0.0;
+      }
+   }
 
-            float x = Px[i][j];
-            float y = Py[i][j];
+   // make several random hills, so we can see snow :)
+   int numHills = 8;
 
-            float hill1 = 0.25 * sin(4.0 * x) * cos(4.0 * y);
-            float hill2 = 0.15 * cos(3.0 * x + 2.0 * y);
-            float hill3 = 0.10 * sin(6.0 * sqrt(x * x + y * y));
+   for (int h = 0; h < numHills; h++)
+   {
+      float cx = myrand(0.8);
+      float cy = myrand(0.8);
+      float height = 0.15 + (rand() / (float)RAND_MAX) * 0.35;
+      float spread = 0.15 + (rand() / (float)RAND_MAX) * 0.25;
 
-            float noise = myrand(0.05);
+      for (int i = 0; i <= SIZE; i++)
+      {
+         for (int j = 0; j <= SIZE; j++)
+         {
+            float dx = Px[i][j] - cx;
+            float dy = Py[i][j] - cy;
+            float dist2 = dx * dx + dy * dy;
 
-            Pz[i][j] = hill1 + hill2 + hill3 + noise;
-        }
-    }
+            // smooth round hill
+            Pz[i][j] += height * exp(-dist2 / (spread * spread));
+         }
+      }
+   }
 
-    smoothSurface();
-    initColors();
-    initNormals();
+   // small random noise so it does not look too perfect
+   for (int i = 0; i <= SIZE; i++)
+   {
+      for (int j = 0; j <= SIZE; j++)
+      {
+         Pz[i][j] += myrand(0.05);
+      }
+   }
+
+   // smooth several times, so it looks better
+   smoothSurface();
+   smoothSurface();
+   smoothSurface();
+
+   initColors();
+   initNormals();
 }
 
 //---------------------------------------
