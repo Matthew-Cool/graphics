@@ -1,8 +1,5 @@
 //---------------------------------------
 // Program: ray_trace.cpp
-// Purpose: Reproduce Turner Whitted's sphere animation
-//          (Feature 1) - solid yellow ball moving over
-//          a checkerboard floor.
 // Author:  John Gauch (modified)
 // Date:    Spring 2026
 //---------------------------------------
