@@ -1,0 +1,13 @@
+ifeq ($(shell uname),Darwin)
+LIB = -DMAC -framework OpenGL -framework GLUT
+else
+LIB = -lGL -lGLU -lglut
+endif
+
+CC = g++ -std=c++11 -Wall -Wno-deprecated-declarations -O3
+
+project: proj5.cpp ray_classes.cpp ray_classes.h
+	$(CC) -o proj5 proj5.cpp ray_classes.cpp $(LIB)
+
+clean:
+	rm -f proj5
